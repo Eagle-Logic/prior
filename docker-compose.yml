@@ -1,0 +1,64 @@
+# PRIOR: engine + console, one command.
+#
+#   1. cp .env.example .env         # then set MODELS_DIR and MODEL
+#   2. put your license.bin next to this file   (from your trial email or purchase)
+#   3. docker compose up
+#
+#   Engine  → http://localhost:8089/v1   OpenAI-compatible. Point your app here
+#   Console → http://localhost:8080      open it, enter the engine URL + an Operator key
+#
+# THE ADMIN KEY: on first run the engine prints a one-time bootstrap admin API key in its
+# logs; use it to sign into the console. Missed it? `docker compose logs engine` shows it
+# again (until the container is recreated), or set PRIOR_RESET_ADMIN_KEY=1 and restart to
+# rotate a fresh one. Set PRIOR_API_KEY in .env to supply your own instead.
+#
+# PRIOR runs ONE model per engine (one model per container). GPU needs the NVIDIA
+# Container Toolkit. For CPU-only, delete the engine `deploy:` block and set
+# PRIOR_NATIVE_NGL=0 in .env.
+services:
+  engine:
+    image: ghcr.io/eagle-logic/prior:slim
+    restart: unless-stopped
+    ports:
+      # Loopback by default (localhost only, secure). To expose on your network,
+      # set PRIOR_PUBLISH_ADDR=0.0.0.0 in .env, turn on PRIOR_REQUIRE_AUTH below,
+      # and put it behind HTTPS.
+      - "${PRIOR_PUBLISH_ADDR:-127.0.0.1}:8089:8089"
+    environment:
+      PRIOR_BIND_HOST: "0.0.0.0"                       # listen on all interfaces INSIDE the container
+      PRIOR_NATIVE_MODEL: "/models/${MODEL:?set MODEL in .env}"
+      PRIOR_NATIVE_NGL: "${PRIOR_NATIVE_NGL:-99}"      # GPU layers (0 = CPU-only)
+      # Policy is ONE switch: `on` (default) runs the shipped detect+steer policy (harmful requests and
+      # destructive ops are refused); `off` = byte-for-byte passthrough. Detection and steering always
+      # move together; there is no way to arm one without the other.
+      PRIOR_POLICY: "${PRIOR_POLICY:-on}"
+      # Let the console's browser origin call the engine (CORS). Add your real
+      # host here too if you open the console from another machine.
+      PRIOR_ALLOWED_ORIGINS: "http://localhost:8080"
+      # Rotate the admin key if you lost it: `PRIOR_RESET_ADMIN_KEY=1 docker compose up`.
+      PRIOR_RESET_ADMIN_KEY: "${PRIOR_RESET_ADMIN_KEY:-}"
+      # PRIOR_API_KEY: "your-own-key"                  # supply your own admin key instead of the auto-generated one
+      # PRIOR_REQUIRE_AUTH: "1"                        # require a Bearer key on /v1 (do this whenever you expose the engine)
+    volumes:
+      - "${MODELS_DIR:?set MODELS_DIR in .env}:/models:ro"   # your GGUF models (read-only)
+      - "./license.bin:/app/license.bin:ro"                 # must exist before `up`, or upload it later in the console
+      - "prior_state:/app/state"                            # license binding + admin keys + audit log; persist together
+    # GPU: delete this whole block for CPU-only:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  console:
+    image: ghcr.io/eagle-logic/prior-webui:latest
+    restart: unless-stopped
+    ports:
+      - "${PRIOR_PUBLISH_ADDR:-127.0.0.1}:8080:8080"
+    depends_on:
+      - engine
+
+volumes:
+  prior_state:
