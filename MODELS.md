@@ -41,8 +41,8 @@ Certified picks (4-bit `Q4_K_M`):
 
 Also certified: **Llama-3.2-1B** (~0.8 GB) for the smallest footprint, both **Mistral-Nemo-12B** builds,
 the **Qwen3-Next** hybrid class, **Phi-4** / **Phi-4-mini**, **Ministral-3**, a **DeepSeek-R1 14B distill**,
-and **Gemma-4-12B**. **Qwen3-14B**, **Gemma-3**, **Gemma-4-E4B**, and **SmolLM3** are currently **beta**
-for steering, so load them for the gate, not for reliable refusals. The full roster (**22 builds across 9
+and both 12B **Gemma** builds (**Gemma-3-12B** and **Gemma-4-12B**). **Qwen3-14B**, the smaller **Gemma-3/4**
+builds, and **SmolLM3** are currently **beta** for steering, so load them for the gate, not for reliable refusals. The full roster (**22 builds across 9
 architecture families**, each graded) lives at **[eagle-logic.com/models](https://eagle-logic.com/models)**
 (machine-readable at **[/model-registry.json](https://eagle-logic.com/model-registry.json)**).
 
