@@ -94,8 +94,7 @@ imply coverage we don't have.
 
 ### What has and hasn't been independently judged yet
 
-- Independent cais-judging is complete across the **1B–8B** fleet (Llama-3.1-8B fully judged).
-  Independent judging on the **12–14B** models is **pending cloud hardware**.
+- Independent cais-judging is complete across the **full 1B–14B** fleet (Llama-3.1-8B fully judged).
 - **Multi-turn:** payload-split attacks are hard-blocked; compliance-grooming is routed to
   human-confirm (YELLOW). Across-turn composition is validated at **≤8B**; above 8B is pending.
 - **Faithfulness** figures are for **adversarial / poisoned retrieval**. On a clean single-source
@@ -115,8 +114,7 @@ unchanged. See **[MODELS.md](./MODELS.md)**.
 Judged model: **Llama-3.1-8B-Instruct** · Fleet (1B–14B): **Llama-3.2, Qwen3 (incl. abliterated),
 Gemma-3, Gemma-4, Mistral-Nemo, SmolLM3** · Hardware: **NVIDIA RTX 3060 (12 GB) and RTX 5060 (8 GB)** · Safety judge:
 **independent cais/HarmBench classifier** · Cross-check: **independent LLM-judge, 93.6% agreement
-(n=800), scored as conservative floors**. Frontier-scale (12–14B) independent judging and across-turn
-composition above 8B are in progress.
+(n=800), scored as conservative floors**. Across-turn composition above 8B is in progress.
 
 ---
 
