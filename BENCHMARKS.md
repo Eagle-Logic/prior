@@ -34,10 +34,18 @@ the same intent. That work is on the gate, not the actuator. We call it out expl
 
 | Result | What it means |
 |---|---|
+| **StrongREJECT** forbidden-prompt harm on Mistral-Nemo-12B: mean harm **0.600 → 0.084**, an **86%** cut | Scored by StrongREJECT's own fine-tuned classifier. A strong safety system prompt only reaches 0.184, so PRIOR leaves less than half the residual harm that prompting does. |
 | **100%** of gate-routed harmful completions refused (**79/79**, cais-judged, across 11 models) | When the gate fires, the intervention holds, and it's independently verified. |
 | Mistral-Nemo-12B attack-success **44.6% → 28.9%** | On the highest-headroom model, PRIOR roughly halves the residual attack surface. |
 | **96%** jailbreak recovery via span-scoring, at **0** benign false-blocks | Holds up against obfuscated/jailbroken phrasings without taxing legitimate traffic. |
 | Generalization to unseen attacks: **AUC ~0.93** | Coverage converges on a shared harm manifold. It is not endless string-chasing. |
+
+> **About the StrongREJECT run:** it used a policy pack authored for StrongREJECT's categories, run
+> natively on the shipping image against a stock-Ollama baseline; 49 of the 60 prompts were genuinely
+> harmful at base. That pack is deliberately aggressive: it lifts RED coverage from 8.3% to 51.7% and
+> costs **8.0%** over-refusal on XSTest. That trade is specific to that pack. The **default** packs add
+> **zero** false refusals, which is the 0-benign-false-blocks figure quoted elsewhere on this page. Don't
+> read the two as the same operating point.
 
 > **Honest framing:** most *per-model* attack-success drops are small (1–7pp), because modern instruct
 > models already refuse most obvious harm at baseline. PRIOR's safety value is largest on high-headroom
@@ -53,7 +61,6 @@ base model.
 |---|---|
 | **GSM8K byte-identical across all 12 models** (exact-match 1.0), validated to Qwen3-14B (87%) | Math reasoning is untouched by steering. |
 | **MMLU 67.25%**, baseline = steered, Δ 0 | Knowledge is untouched. |
-| **HumanEval pass@1 59.8%**, byte-identical steered vs base | Code generation is untouched. |
 | **0 induced over-refusals** (XSTest, 12 models, exact-match 1.0) | PRIOR does not make the model more prudish on safe prompts. |
 | Overhead **+0.0%** (no policy fires) · **+0.2%** (intervention fires) | Negligible cost, measured on saturated batches. |
 
@@ -118,4 +125,4 @@ Gemma-3, Gemma-4, Mistral-Nemo, SmolLM3** · Hardware: **NVIDIA RTX 3060 (12 GB)
 
 ---
 
-<sub>Questions about methodology? Get in touch at https://eagle-logic.com · Full docs: https://eagle-logic.com/docs</sub>
+<sub>Questions about methodology? Get in touch at https://eagle-logic.com · Full docs: https://eagle-logic.com/docs/</sub>

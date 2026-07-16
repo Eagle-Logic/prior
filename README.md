@@ -9,8 +9,8 @@ no-op**; when it isn't, PRIOR steers the outcome deterministically, regardless o
 inclination.
 
 - 🌐 **Website:** https://eagle-logic.com
-- 📚 **Docs:** https://eagle-logic.com/docs
-- 🚀 **Free 30-day trial** (full capabilities, no node lock): https://eagle-logic.com
+- 📚 **Docs:** https://eagle-logic.com/docs/
+- 🚀 **Free 30-day trial** (full capabilities, no node lock): https://eagle-logic.com/get-prior#trial
 - ✉️ **Sales & enterprise:** sales@eagle-logic.com
 
 > This repository is the public overview: what PRIOR is, how it measures up, and which models it
@@ -36,7 +36,7 @@ per-request via the `prior_options` vendor extension. Governance (packs, keys, a
 role-gated `/admin` surface.
 
 **Policy is a document, not code.** Ship your own policy by pasting a governance document; PRIOR
-compiles it into a detection pack. See the [docs](https://eagle-logic.com/docs).
+compiles it into a detection pack. See the [docs](https://eagle-logic.com/docs/).
 
 ---
 
@@ -59,7 +59,7 @@ docker compose up
 **See it work:** open the console's **Playground** and click a prebuilt test prompt. A benign one routes
 **GREEN** (`x-prior-zone: GREEN`, `x-prior-injections: 0`) and is answered bit-for-bit as the base model
 would; a harmful one routes **RED**, and the refusal holds even when you obfuscate the request. Full
-walkthrough: **[Getting Started](https://eagle-logic.com/docs)**.
+walkthrough: **[Getting Started](https://eagle-logic.com/docs/)**.
 
 The compose file and [`.env.example`](./.env.example) are commented inline for the knobs you'll actually
 touch: the **admin key** (printed once in the engine logs on first run; `PRIOR_RESET_ADMIN_KEY=1` rotates
@@ -96,10 +96,11 @@ Matched-pair tests (same model, seed, and harness; steering off vs on), independ
 
 | Result | Meaning |
 |---|---|
+| Forbidden-prompt harm down **86%** on Mistral-Nemo-12B (StrongREJECT, the benchmark's own classifier: mean harm 0.600 to 0.084) | Less than half the residual harm a strong safety system prompt leaves (0.184). |
 | **100%** of gate-routed harmful completions refused (**79/79**, cais-judged, 11 models) | When the gate fires, the intervention holds. |
 | **96%** jailbreak recovery at **0** benign false-blocks | Holds up against obfuscated phrasings without taxing legit traffic. |
 | Generalization to unseen attacks **AUC ~0.93** | Coverage converges on a shared harm manifold, not string-chasing. |
-| **GSM8K byte-identical**, **MMLU Δ 0**, **HumanEval byte-identical**, **0 induced over-refusals** | Zero capability tax when no policy fires. |
+| **GSM8K byte-identical**, **MMLU Δ 0**, **0 induced over-refusals** | Zero capability tax when no policy fires. |
 | Overhead **+0.0%** (no policy) / **+0.2%** (intervention) | Negligible cost. |
 
 We publish provenance with every figure and **don't publish numbers we can't defend**. That includes an
@@ -126,7 +127,7 @@ commands: **[MODELS.md](./MODELS.md)**.
 - **Free 30-day trial:** fully featured, no node lock. The same file slot later takes a paid license,
   with no reinstall and no migration.
 - **Distribution:** `ghcr.io/eagle-logic/prior:slim` (public, default packs, start here) and a
-  private full-pack image for paid/enterprise. See **[pricing & plans](https://eagle-logic.com/licensing)**.
+  private full-pack image for paid/enterprise. See **[pricing & plans](https://eagle-logic.com/get-prior)**.
 
 ---
 
