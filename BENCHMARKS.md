@@ -21,7 +21,7 @@ the same intent. That work is on the gate, not the actuator. We call it out expl
 
 - **Fleet:** twelve models from 1B to 14B, across six architecture families: Llama-3.2, Qwen3
   (including an abliterated build), Gemma-3, Gemma-4, Mistral-Nemo, and SmolLM3.
-- **Hardware:** a single NVIDIA RTX 3060 (12 GB). Every fleet result is reproduced per model.
+- **Hardware:** commodity NVIDIA GPUs, an RTX 3060 (12 GB) and an RTX 5060 (8 GB), CUDA 12.4 / 12.8. Every fleet result is reproduced per model.
 - **Judging:** safety is scored by the independent **cais/HarmBench classifier**, with an independent
   LLM-judge cross-check (**93.6% agreement, n=800**) that rated our reported figures as *conservative
   floors*. In other words, the real numbers are likely better, not worse.
@@ -113,7 +113,7 @@ unchanged. See **[MODELS.md](./MODELS.md)**.
 ## Provenance
 
 Judged model: **Llama-3.1-8B-Instruct** · Fleet (1B–14B): **Llama-3.2, Qwen3 (incl. abliterated),
-Gemma-3, Gemma-4, Mistral-Nemo, SmolLM3** · Hardware: **NVIDIA RTX 3060, 12 GB** · Safety judge:
+Gemma-3, Gemma-4, Mistral-Nemo, SmolLM3** · Hardware: **NVIDIA RTX 3060 (12 GB) and RTX 5060 (8 GB)** · Safety judge:
 **independent cais/HarmBench classifier** · Cross-check: **independent LLM-judge, 93.6% agreement
 (n=800), scored as conservative floors**. Frontier-scale (12–14B) independent judging and across-turn
 composition above 8B are in progress.
