@@ -66,6 +66,12 @@ touch: the **admin key** (printed once in the engine logs on first run; `PRIOR_R
 it), the **policy switch** (`PRIOR_POLICY=off` for byte-for-byte passthrough), and **CPU-only** mode
 (`PRIOR_NATIVE_NGL=0`, delete the `deploy:` block).
 
+**Picking an image.** `prior:slim` is the CUDA 12.4 build: it covers Turing, Ampere, and Ada (T4,
+A100, RTX 30/40) and wants driver 550. Two alternates, same engine binary, different GPU reach:
+`prior:slim-cuda12.8` for **Blackwell / RTX 50 series** (`sm_120`, driver 570), which 12.4 does not
+cover, and `prior:slim-cpu` if you have no GPU and no driver. Pin a release with `1.0.0-cuda12.4`,
+`1.0.0-cuda12.8`, or `1.0.0-cpu`. Full table: **[Choosing an image](https://eagle-logic.com/docs/getting-started#choosing-an-image)**.
+
 <details>
 <summary><b>Engine only, no console</b> (a 30-second smoke test)</summary>
 
