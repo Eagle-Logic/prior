@@ -118,8 +118,8 @@ honest account of where the frontier still is (gate recall) and what's out of sc
 
 Steering is **calibrated per model**, so PRIOR ships a **registry** grading each supported GGUF
 **certified** (calibration swept and validated) or **beta** (sensible defaults). The gate works on any
-model; reliable steering needs a supported one. The current roster is **22 calibrated builds across 9
-architecture families**. Recommended quickstart: **Llama-3.2-3B** (certified, ~2 GB). Full list + fetch
+model; reliable steering needs a supported one. The current roster is **24 calibrated builds across 9
+architecture families**, up to 31B. Recommended quickstart: **Llama-3.2-3B** (certified, ~2 GB). Full list + fetch
 commands: **[MODELS.md](./MODELS.md)**.
 
 ---
