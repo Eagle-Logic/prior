@@ -59,16 +59,19 @@ Use the Hugging Face CLI to grab the **quickstart default** (Llama-3.2-3B, ~2 GB
 ```bash
 pip install -U "huggingface_hub[cli]"
 
-huggingface-cli download bartowski/Llama-3.2-3B-Instruct-GGUF \
+hf download bartowski/Llama-3.2-3B-Instruct-GGUF \
   Llama-3.2-3B-Instruct-Q4_K_M.gguf --local-dir ./models
 ```
 
 Or the more capable Qwen3-8B (~5 GB):
 
 ```bash
-huggingface-cli download Qwen/Qwen3-8B-GGUF \
+hf download Qwen/Qwen3-8B-GGUF \
   Qwen3-8B-Q4_K_M.gguf --local-dir ./models
 ```
+
+> `hf` is the current Hugging Face CLI. On older `huggingface_hub` installs the command is
+> `huggingface-cli download …` with the same arguments.
 
 > Repos occasionally move. If a download 404s, search Hugging Face for the model's official GGUF
 > release or a reputable uploader (e.g. `bartowski/…-GGUF`), and keep the **exact filename** shown above

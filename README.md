@@ -66,11 +66,16 @@ touch: the **admin key** (printed once in the engine logs on first run; `PRIOR_R
 it), the **policy switch** (`PRIOR_POLICY=off` for byte-for-byte passthrough), and **CPU-only** mode
 (`PRIOR_NATIVE_NGL=0`, delete the `deploy:` block).
 
-**Picking an image.** `prior:slim` is the CUDA 12.4 build: it covers Turing, Ampere, and Ada (T4,
-A100, RTX 30/40) and wants driver 550. Two alternates, same engine binary, different GPU reach:
-`prior:slim-cuda12.8` for **Blackwell / RTX 50 series** (`sm_120`, driver 570), which 12.4 does not
-cover, and `prior:slim-cpu` if you have no GPU and no driver. Pin a release with `1.0.0-cuda12.4`,
-`1.0.0-cuda12.8`, or `1.0.0-cpu`. Full table: **[Choosing an image](https://eagle-logic.com/docs/getting-started#choosing-an-image)**.
+**Picking an image.** `prior:slim` is the **CUDA 12.8** build. As of 1.1.0 it carries every GPU
+generation we support (Turing through Blackwell: `sm_75/80/86/89/120`, T4, A100, RTX 30/40/**50**)
+and wants **driver 570 or newer**, so it is the right default for almost everyone. Two alternates, same
+engine binary: `prior:slim-cuda12.4` if your host driver is **older than 570** (it cannot emit
+Blackwell, so no RTX 50 series), and `prior:slim-cpu` if you have no GPU and no driver. Pin a release
+with `1.1.0-cuda12.8`, `1.1.0-cuda12.4`, or `1.1.0-cpu`. Full table:
+**[Choosing an image](https://eagle-logic.com/docs/getting-started#choosing-an-image)**.
+
+> **Upgrading from 1.0.0?** `prior:slim` used to track the CUDA 12.4 build. If your host driver is
+> below 570, move to `prior:slim-cuda12.4`, otherwise the container will not start.
 
 <details>
 <summary><b>Engine only, no console</b> (a 30-second smoke test)</summary>
@@ -80,12 +85,17 @@ docker run -d --name prior -p 127.0.0.1:8089:8089 \
   -e PRIOR_NATIVE_MODEL=/models/Llama-3.2-3B-Instruct-Q4_K_M.gguf \
   -v "$(pwd)/models:/models:ro" \
   -v "$(pwd)/license.bin:/app/license.bin:ro" \
+  -v prior_state:/app/state \
   ghcr.io/eagle-logic/prior:slim
 
 curl -s http://localhost:8089/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{"model":"prior","messages":[{"role":"user","content":"Write a haiku about the ocean."}]}' -i
 ```
+
+The `prior_state` volume holds the engine's license identity record, admin keys, and audit log.
+**Keep it** across container replacement: on a node-locked paid license the identity record is what
+holds your seat, and starting fresh makes the node look like a second one to seat enforcement.
 </details>
 
 The engine verifies its license **locally** against a baked-in public key (no activation call to start),
@@ -118,9 +128,11 @@ honest account of where the frontier still is (gate recall) and what's out of sc
 
 Steering is **calibrated per model**, so PRIOR ships a **registry** grading each supported GGUF
 **certified** (calibration swept and validated) or **beta** (sensible defaults). The gate works on any
-model; reliable steering needs a supported one. The current roster is **24 calibrated builds across 9
-architecture families**, up to 31B. Recommended quickstart: **Llama-3.2-3B** (certified, ~2 GB). Full list + fetch
-commands: **[MODELS.md](./MODELS.md)**.
+model; reliable steering needs a supported one. The roster spans architecture families from Llama and
+Qwen3 to Gemma 3 and Mistral-Nemo, up to 31B. Recommended quickstart: **Llama-3.2-3B** (certified,
+~2 GB). The authoritative, always-current count and per-build status live at
+**[eagle-logic.com/models](https://eagle-logic.com/models)**; full list + fetch commands:
+**[MODELS.md](./MODELS.md)**.
 
 ---
 
