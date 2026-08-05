@@ -18,6 +18,30 @@ inclination.
 
 ---
 
+## ⚠️ Running 1.1.0 or earlier? Upgrade
+
+License check-in now proves possession of the signed license. Engines from 1.1.0 and earlier do not
+send that proof, so their check-in is refused, **and the failure is silent**. The engine keeps
+answering. It keeps steering until its check-in window lapses, and then steering switches off and the
+model passes through unchanged. No crash, no error, no log you would notice in time.
+
+- **The upgrade is a pull and a restart.** Nothing else.
+- **Your license file is unchanged and needs no reissue.** Same `license.bin`, same slot.
+- **`x-prior-steering` is how you tell.** Check it now, and after upgrading:
+
+```bash
+curl -si http://localhost:8089/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"prior","messages":[{"role":"user","content":"hello"}]}' | grep -i x-prior-steering
+```
+
+```
+x-prior-steering: enabled    ← licensed, policy live
+x-prior-steering: disabled   ← unlicensed; the model is passing through unsteered
+```
+
+---
+
 ## What PRIOR is
 
 Two parts, worth keeping separate:
@@ -66,16 +90,31 @@ touch: the **admin key** (printed once in the engine logs on first run; `PRIOR_R
 it), the **policy switch** (`PRIOR_POLICY=off` for byte-for-byte passthrough), and **CPU-only** mode
 (`PRIOR_NATIVE_NGL=0`, delete the `deploy:` block).
 
-**Picking an image.** `prior:slim` is the **CUDA 12.8** build. As of 1.1.0 it carries every GPU
-generation we support (Turing through Blackwell: `sm_75/80/86/89/120`, T4, A100, RTX 30/40/**50**)
-and wants **driver 570 or newer**, so it is the right default for almost everyone. Two alternates, same
-engine binary: `prior:slim-cuda12.4` if your host driver is **older than 570** (it cannot emit
-Blackwell, so no RTX 50 series), and `prior:slim-cpu` if you have no GPU and no driver. Pin a release
-with `1.1.0-cuda12.8`, `1.1.0-cuda12.4`, or `1.1.0-cpu`. Full table:
+**Picking an image.** `prior:slim` is the **CUDA 12.4** build, and it is the right default for almost
+everyone: it covers Turing, Ampere and Ada (T4, A100, RTX 30/40) and asks only for **driver 550 or
+newer**, the broadest reach of the three. Two alternates, same engine binary:
+
+| Tag | Use it when | Host driver |
+|---|---|---|
+| **`prior:slim`** (default) | Any supported GPU except Blackwell: T4, A100, RTX 30/40. | **550 or newer** |
+| **`prior:slim-cuda12.9`** | **Blackwell / RTX 50 series** (`sm_120`), which 12.4 cannot emit. | **575.57.08 or newer** (Linux x86_64), **576.57 or newer** (Windows) |
+| **`prior:slim-cpu`** | No GPU and no driver. Everything works, generation is just slower. | none |
+
+Pin a release with `1.2.0-cuda12.4`, `1.2.0-cuda12.9`, or `1.2.0-cpu`. Full table:
 **[Choosing an image](https://eagle-logic.com/docs/getting-started#choosing-an-image)**.
 
-> **Upgrading from 1.0.0?** `prior:slim` used to track the CUDA 12.4 build. If your host driver is
-> below 570, move to `prior:slim-cuda12.4`, otherwise the container will not start.
+> **`prior:slim-cuda12.8` is deprecated.** That tag always named a CUDA version it did not carry: the
+> image has been built on `nvidia/cuda:12.9.x` since the base bump. It is still published, resolving to
+> **the same digest** as `prior:slim-cuda12.9`, so anything already pulling it keeps working. Move to
+> `prior:slim-cuda12.9` when convenient.
+
+**Verifying what you pulled.** Every published image is signed and carries a CycloneDX SBOM
+attestation. The signing key is [`cosign.pub`](./cosign.pub) in this repo:
+
+```bash
+cosign verify --key cosign.pub ghcr.io/eagle-logic/prior:slim
+cosign verify-attestation --key cosign.pub --type cyclonedx ghcr.io/eagle-logic/prior:slim
+```
 
 <details>
 <summary><b>Engine only, no console</b> (a 30-second smoke test)</summary>
@@ -98,10 +137,11 @@ The `prior_state` volume holds the engine's license identity record, admin keys,
 holds your seat, and starting fresh makes the node look like a second one to seat enforcement.
 </details>
 
-The engine verifies its license **locally** against a baked-in public key (no activation call to start),
-and your prompts and model data never leave your environment. Connected tiers make a lightweight periodic
-license check-in (license id + node id only, never your data); an **air-gapped** tier that makes no
-outbound calls at all is available for offline deployments.
+The engine verifies its license **locally** against a baked-in public key, and your prompts and model
+data never leave your environment. Connected tiers start without an activation call and then make a
+lightweight periodic license check-in (license id + node id only, never your data). The **air-gapped**
+tier makes no outbound calls at all: it is activated once by hand, offline, by pasting back a signed
+response to a challenge the engine prints.
 
 ---
 
@@ -140,8 +180,9 @@ Qwen3 to Gemma 3 and Mistral-Nemo, up to 31B. Recommended quickstart: **Llama-3.
 
 - **Self-hosted, node-locked** subscription, billed annually. The engine verifies an ED25519-signed
   `license.bin` **locally** against a baked-in public key (no activation call to run). Connected tiers
-  make a periodic license check-in (license id + node id only, never your data); an **air-gapped** tier
-  with no outbound calls is available for offline deployments.
+  make a periodic license check-in (license id + node id only, never your data).
+- **Air-gapped** licenses make no outbound calls at all. They are activated once by hand, offline, and
+  are priced per site rather than per node. Issued on request.
 - **Free 30-day trial:** fully featured, no node lock. The same file slot later takes a paid license,
   with no reinstall and no migration.
 - **Distribution:** `ghcr.io/eagle-logic/prior:slim` (public, default packs, start here) and a
