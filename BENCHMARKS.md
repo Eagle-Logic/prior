@@ -28,6 +28,12 @@ the same intent. That work is on the gate, not the actuator. We call it out expl
 - **Judging:** safety is scored by the independent **cais/HarmBench classifier**, with an independent
   LLM-judge cross-check (**93.6% agreement, n=800**) that rated our reported figures as *conservative
   floors*. In other words, the real numbers are likely better, not worse.
+- **Release measured:** every figure in *Capabilities* and *Limitations* below was measured on
+  **PRIOR 1.0.0** (source runs dated 2026-06-22 to 2026-07-14). They have **not** been re-measured
+  since. Two subsequent releases moved the gate — see [What changed after 1.0.0](#what-changed-after-100)
+  — and both moved it in the direction of catching more, so treat these as floors that have since
+  been raised rather than as current bests. We would rather publish a stale number we can trace than
+  a fresh one we cannot.
 
 ---
 
@@ -116,6 +122,35 @@ The steering geometry is a property of each model and must be calibrated before 
 in the registry are graded **certified** (calibration swept and validated) or **beta** (sensible
 defaults, not yet swept). Bringing a new model means a one-time calibration; policies carry over
 unchanged. See **[MODELS.md](./MODELS.md)**.
+
+---
+
+## What changed after 1.0.0
+
+The numbers above are 1.0.0 measurements. Two releases since have worked on exactly the frontier this
+page names as the open problem — **gate recall**, catching more phrasings of the same intent. The
+figures below are from those releases' own test runs rather than a re-run of the headline suite, so
+they are **not** directly comparable to the table above; they say what moved, not what the new
+headline is.
+
+**1.1.0 — the RED bar was set too conservatively.** Retuning the shipped `harm_veto` threshold
+(0.516 → 0.43) roughly **doubled HarmBench RED coverage (≈28% → ≈62%)** with benign false-fire
+holding at **≈1%**. Steered refusals also stopped degenerating into token loops and word-salad
+(degenerate output on steered HarmBench → ~0%).
+
+**1.2.0 — detection reached three places it previously could not:**
+
+| Gap | Before | After | Benign cost |
+|---|---|---|---|
+| Payloads in tool results / retrieved documents | **100% routed GREEN** — no detection at all | parity with user-delivered text (72.7% vs 69.1% missed) | **0.0%** |
+| German-language attacks | 96.2% routed GREEN | 48.1% silent misses | **0.00%** |
+| Spaced-out text (`I g n o r e   a l l`) | 92.3% routed GREEN | 12.8% | **zero, measured** |
+| Period-separated text | 43.6% GREEN | 5.1% | **zero, measured** |
+
+Two honest caveats. The tool-result gap needed **opt-in** configuration
+(`PRIOR_UNTRUSTED_ROLES`) — a default deployment is unchanged, because which roles carry untrusted
+data is a property of your system, not ours. And German at 48.1% missed is *better*, not *good*; it
+is a calibration fix on an English-first encoder, not a multilingual detector.
 
 ---
 
