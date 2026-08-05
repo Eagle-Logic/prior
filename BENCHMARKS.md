@@ -19,9 +19,12 @@ the same intent. That work is on the gate, not the actuator. We call it out expl
 
 ## How we measured
 
-- **Fleet:** twelve models from 1B to 14B, across six architecture families: Llama-3.2, Qwen3
-  (including an abliterated build), Gemma-3, Gemma-4, Mistral-Nemo, and SmolLM3.
-- **Hardware:** commodity NVIDIA GPUs, an RTX 3060 (12 GB) and an RTX 5060 (8 GB), CUDA 12.4 / 12.8. Every fleet result is reproduced per model.
+- **Fleet under test:** twelve models from 1B to 14B, across six architecture families: Llama-3.2,
+  Qwen3 (including an abliterated build), Gemma-3, Gemma-4, Mistral-Nemo, and SmolLM3. The results
+  below are measured on that set. The *supported* registry is larger — **26 graded builds across 9
+  architecture families** (see [MODELS.md](./MODELS.md)) — but a model being calibrated is not the
+  same as it appearing in these numbers, and we do not conflate the two.
+- **Hardware:** commodity NVIDIA GPUs, an RTX 3060 (12 GB) and an RTX 5060 (8 GB), CUDA 12.4 / 12.9. Every fleet result is reproduced per model.
 - **Judging:** safety is scored by the independent **cais/HarmBench classifier**, with an independent
   LLM-judge cross-check (**93.6% agreement, n=800**) that rated our reported figures as *conservative
   floors*. In other words, the real numbers are likely better, not worse.
@@ -34,9 +37,9 @@ the same intent. That work is on the gate, not the actuator. We call it out expl
 
 | Result | What it means |
 |---|---|
-| **StrongREJECT** forbidden-prompt harm on Mistral-Nemo-12B: mean harm **0.600 → 0.084**, an **86%** cut | Scored by StrongREJECT's own fine-tuned classifier. A strong safety system prompt only reaches 0.184, so PRIOR leaves less than half the residual harm that prompting does. |
+| **StrongREJECT** forbidden-prompt harm on Mistral-Nemo-12B-Instruct: mean harm **0.600 → 0.084**, an **86%** cut | Scored by StrongREJECT's own fine-tuned classifier. A strong safety system prompt only reaches 0.184, so PRIOR leaves less than half the residual harm that prompting does. |
 | **100%** of gate-routed harmful completions refused (**79/79**, cais-judged, across 11 models) | When the gate fires, the intervention holds, and it's independently verified. |
-| Mistral-Nemo-12B attack-success **44.6% → 28.9%** | On the highest-headroom model, PRIOR roughly halves the residual attack surface. |
+| Mistral-Nemo-12B-Instruct attack-success **44.6% → 28.9%** | On the highest-headroom model, PRIOR roughly halves the residual attack surface. |
 | **96%** jailbreak recovery via span-scoring, at **0** benign false-blocks | Holds up against obfuscated/jailbroken phrasings without taxing legitimate traffic. |
 | Generalization to unseen attacks: **AUC ~0.93** | Coverage converges on a shared harm manifold. It is not endless string-chasing. |
 

@@ -39,14 +39,14 @@ Certified picks (4-bit `Q4_K_M`):
 | **Qwen3-4B-Instruct-2507** | ~2.5 GB | Certified | A strong 4B middle ground. |
 | **Meta-Llama-3.1-8B-Instruct** | ~5 GB | Certified · reference | Our **primary judged model**; pick this to reproduce the cais-judged safety numbers. Some headline results are measured on other models (StrongREJECT and attack-success on Mistral-Nemo-12B, faithfulness on Qwen3-8B); each is named where it's quoted. |
 
-Also certified: **Llama-3.2-1B** (~0.8 GB) for the smallest footprint, both **Mistral-Nemo-12B** builds,
+Also certified: **Llama-3.2-1B** (~0.8 GB) for the smallest footprint, **Mistral-Nemo-12B-Instruct**,
 the **Qwen3-Next** hybrid class (including the **27B Qwen3.5**), **Phi-4** / **Phi-4-mini**, **Ministral-3**,
-a **DeepSeek-R1 14B distill**, and the **Gemma** builds at 12B and **31B** (**Gemma-3-12B**, **Gemma-4-12B**,
-and **Gemma-4-31B**, the largest calibrated build). **Qwen3-14B**, the smaller **Gemma-3/4**
-builds, **SmolLM3**, and the **abliterated Qwen3-4B-Instruct-2507** build are currently **beta** for
-steering, so load them for the gate, not for reliable refusals. (The stock, non-abliterated
+a **DeepSeek-R1 14B distill**, **Gemma-3-12B**, and **Gemma-4-31B** (the largest calibrated build).
+**Qwen3-14B**, **Gemma-4-12B**, the smaller **Gemma-3/4** builds, **SmolLM3**, the second
+**Mistral-Nemo** build (`Mistral-Nemo-Instruct-2407`), and the **abliterated Qwen3-4B-Instruct-2507**
+build are currently **beta** for steering, so load them for the gate, not for reliable refusals. (The stock, non-abliterated
 Qwen3-4B-Instruct-2507 in the table above is certified; the registry tags the two apart.) The full
-roster (**24 builds across 9 architecture families**, 19 certified and 5 beta, each graded) lives at
+roster (**26 builds across 9 architecture families**, 18 certified and 8 beta, each graded) lives at
 **[eagle-logic.com/models](https://eagle-logic.com/models)**
 (machine-readable at **[/model-registry.json](https://eagle-logic.com/model-registry.json)**).
 
